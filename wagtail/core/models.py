@@ -1403,6 +1403,15 @@ class SubmittedRevisionsManager(models.Manager):
     def get_queryset(self):
         return super().get_queryset().filter(submitted_for_moderation=True)
 
+class PageRevisionEvent(models.Model):
+    revision = models.ForeignKey('PageRevision', verbose_name=_('revision'), related_name='events', on_delete=models.CASCADE)
+    type = models.CharField(db_index=True, verbose_name=_('type'), default=False)
+    timestamp = models.DateTimeField(db_index=True, verbose_name=_('timestamp'))
+    metadata = models.TextField(verbose_name=_('metadata'))
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, verbose_name=_('user'), null=True, blank=True,
+        on_delete=models.SET_NULL
+    )
 
 class PageRevision(models.Model):
     page = models.ForeignKey('Page', verbose_name=_('page'), related_name='revisions', on_delete=models.CASCADE)
